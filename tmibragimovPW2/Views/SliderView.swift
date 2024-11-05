@@ -13,12 +13,19 @@ final class SliderView: UIStackView {
     let name: String
     let slider: GradientSlider
     let valueField: ValueField
+    var value: Float {
+        didSet {
+            valueField.text = String(Int(value))
+            slider.value = min(value, slider.maximumValue)
+        }
+    }
     
     
     init(name:String, slider: GradientSlider, valueField: ValueField) {
         self.name = name
         self.slider = slider
         self.valueField = valueField
+        value = slider.maximumValue
         super.init(frame: .zero)
         configure()
     }
@@ -30,23 +37,21 @@ final class SliderView: UIStackView {
     
     func configure() {
         axis = .vertical
-        alignment = .leading
+        spacing = 7
         translatesAutoresizingMaskIntoConstraints = false
         
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.text = name
-        nameLabel.font = .systemFont(ofSize: 13, weight: .semibold)
+        nameLabel.font = Constants.labelFont
         nameLabel.textColor = .secondaryLabel
         addArrangedSubview(nameLabel)
         
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
-        slider.sliderValueChanged()
         
         valueField.translatesAutoresizingMaskIntoConstraints = false
         valueField.addTarget(self, action: #selector(valueFieldValueChanged), for: .editingChanged)
-        sliderValueChanged()
         
         let sliderValueStack = UIStackView(arrangedSubviews: [slider, valueField])
         sliderValueStack.translatesAutoresizingMaskIntoConstraints = false
@@ -54,15 +59,20 @@ final class SliderView: UIStackView {
         
         addArrangedSubview(sliderValueStack)
         
-        NSLayoutConstraint.activate([])
+        NSLayoutConstraint.activate([
+            widthAnchor.constraint(equalToConstant: 330),
+        ])
     }
     
     @objc func sliderValueChanged() {
-        valueField.text = String(Int(slider.value * slider.maximumValue))
+        value = slider.value
     }
     
     @objc func valueFieldValueChanged() {
-        self.slider.value = (Float(self.valueField.text!) ?? 0) / slider.maximumValue
-        self.slider.sliderValueChanged()
+        value = min(Float(valueField.text!) ?? 0, slider.maximumValue)
+    }
+    
+    enum Constants {
+        static let labelFont: UIFont = .systemFont(ofSize: 13, weight: .semibold)
     }
 }

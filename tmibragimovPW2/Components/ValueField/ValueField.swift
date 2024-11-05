@@ -28,7 +28,7 @@ final class ValueField: UITextField {
         layer.cornerRadius = 8
         textAlignment = .center
         translatesAutoresizingMaskIntoConstraints = false
-        widthAnchor.constraint(equalToConstant: 77).isActive = true
+        widthAnchor.constraint(equalToConstant: 67).isActive = true
         heightAnchor.constraint(equalToConstant: 36).isActive = true
         
         

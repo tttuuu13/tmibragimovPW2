@@ -11,7 +11,7 @@ import UIKit
 
 final class OpacitySlider: GradientSlider {
     init(color: UIColor) {
-        super.init(minColor: .white, maxColor: color)
+        super.init(minColor: .white, maxColor: color, maxValue: 100)
     }
     
     override func draw(_ rect: CGRect) {

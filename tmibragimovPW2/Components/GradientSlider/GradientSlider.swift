@@ -10,14 +10,22 @@ import UIKit
 
 
 class GradientSlider: UISlider {
-    var minColor: UIColor
-    var maxColor: UIColor
+    var minColor: UIColor {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    var maxColor: UIColor {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     
-    init(minColor: UIColor, maxColor: UIColor) {
+    init(minColor: UIColor, maxColor: UIColor, maxValue: Float) {
         self.minColor = minColor
         self.maxColor = maxColor
         super.init(frame: .zero)
-        setThumbColor(to: UIColor.interpolate(from: minColor, to: maxColor, fraction: CGFloat(value)))
+        maximumValue = maxValue
         configure()
     }
     
@@ -26,24 +34,22 @@ class GradientSlider: UISlider {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func sliderValueChanged() {
-        setThumbColor(to: UIColor.interpolate(from: minColor, to: maxColor, fraction: CGFloat(value)))
-    }
-    
     override func draw(_ rect: CGRect) {
         UIImage.drawColorGradient(on: rect, colors: [minColor, maxColor])
     }
     
-    func configure() {
+    override func setValue(_ value: Float, animated: Bool) {
+        super.setValue(value, animated: animated)
+    }
+    
+    private func configure() {
         minimumValue = 0
-        maximumValue = 1
         value = maximumValue
         layer.cornerRadius = 18
         clipsToBounds = true
         tintColor = .clear
         maximumTrackTintColor = .clear
         minimumTrackTintColor = .clear
-        addTarget(self, action: #selector(sliderValueChanged), for: .valueChanged)
     }
     
     func setThumbColor(to color: UIColor) {
